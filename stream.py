@@ -1,8 +1,5 @@
 import streamlit as st
 import random
-from PIL import Image
-import requests
-from io import BytesIO
 
 # Sample quotes
 quotes = [
@@ -23,12 +20,22 @@ background_urls = [
     "https://source.unsplash.com/1600x900/?ocean,waves"
 ]
 
-# Pick a random background and quote
-selected_background = random.choice(background_urls)
-selected_quote = random.choice(quotes)
-
 # Set page config
 st.set_page_config(page_title="Inspo Generator", layout="wide")
+
+# Initialize session state
+if "quote" not in st.session_state:
+    st.session_state.quote = random.choice(quotes)
+    st.session_state.bg = random.choice(background_urls)
+
+# Handle button click
+if st.button("🔁 New Quote"):
+    st.session_state.quote = random.choice(quotes)
+    st.session_state.bg = random.choice(background_urls)
+
+# Access session state
+selected_quote = st.session_state.quote
+selected_background = st.session_state.bg
 
 # Custom CSS
 st.markdown(f"""
@@ -52,12 +59,6 @@ st.markdown(f"""
         color: #333;
         text-align: center;
     }}
-    .author {{
-        font-size: 1rem;
-        text-align: right;
-        margin-top: 10px;
-        font-style: italic;
-    }}
     </style>
 """, unsafe_allow_html=True)
 
@@ -71,7 +72,3 @@ with st.container():
         <div class='quote'>{selected_quote}</div>
     </div>
     """, unsafe_allow_html=True)
-
-# New quote button
-if st.button("🔁 New Quote"):
-    st.experimental_rerun()
